@@ -3,7 +3,7 @@ from sqlmodel import SQLModel
 
 class ProductoCreate(SQLModel):
     codigo_producto: str
-    descripcion: str
+    nombre: str
     fecha_produccion: date
     lote_produccion: str
 

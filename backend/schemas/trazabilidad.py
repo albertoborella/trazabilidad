@@ -18,7 +18,7 @@ class EventoTimeline(SQLModel):
 class ProductoTimeline(SQLModel):
     id: int
     codigo_producto: str
-    descripcion: str
+    nombre: str
     fecha_produccion: date
     lote_produccion: str
 

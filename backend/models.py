@@ -14,7 +14,8 @@ class TipoEvento(str, Enum):
 class TipoUbicacion(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     codigo: str = Field(unique=True, index=True)
-    descripcion: str
+    nombre:str
+    descripcion: str | None = None
     ubicaciones: list["Ubicacion"] = Relationship(back_populates="tipo")
 
 
@@ -33,7 +34,7 @@ class Ubicacion(SQLModel, table=True):
 class Producto(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     codigo_producto: str = Field(unique=True, index=True)
-    descripcion: str
+    nombre: str
     fecha_produccion: date
     lote_produccion: str
     eventos: list["EventoTrazabilidad"] = Relationship(back_populates="producto")
