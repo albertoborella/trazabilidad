@@ -12,17 +12,28 @@ class EventoTimeline(SQLModel):
     fecha_hora: datetime
     tipo_evento: TipoEvento
     ubicacion: UbicacionTimeline
+
+    patente_1: str | None = None
+    patente_2: str | None = None
+    documento_exportacion: str | None = None
+
     observaciones: str | None = None
 
 
+
 class ProductoTimeline(SQLModel):
-    id: int
     codigo_producto: str
     nombre: str
+    
+
+class LoteTimeline(SQLModel):
+    id: int
+    lote: str
     fecha_produccion: date
-    lote_produccion: str
 
 
 class TrazabilidadResponse(SQLModel):
     producto: ProductoTimeline
+    lote: LoteTimeline
     trazabilidad: list[EventoTimeline]
+

@@ -3,6 +3,7 @@ from sqlmodel import SQLModel
 
 class TipoUbicacionCreate(SQLModel):
     codigo: str
+    nombre: str
     descripcion: str
 
 

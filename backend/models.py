@@ -35,19 +35,32 @@ class Producto(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     codigo_producto: str = Field(unique=True, index=True)
     nombre: str
+    lotes: list["LoteProduccion"] = Relationship(back_populates="producto")
+
+
+class LoteProduccion(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    producto_id: int = Field(foreign_key="producto.id", index=True)
+    lote: str = Field(index=True)
     fecha_produccion: date
-    lote_produccion: str
-    eventos: list["EventoTrazabilidad"] = Relationship(back_populates="producto")
+    producto: Producto | None = Relationship(back_populates="lotes")
+    eventos: list["EventoTrazabilidad"] = Relationship(back_populates="lote")
 
 
 class EventoTrazabilidad(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    producto_id: int = Field(foreign_key="producto.id", index=True)
+    lote_id: int = Field(foreign_key="loteproduccion.id", index=True)
     ubicacion_id: int = Field(foreign_key="ubicacion.id", index=True)
     tipo_evento: TipoEvento = Field(index=True)
     fecha_hora: datetime = Field(index=True)
+    # Transporte (INGRESO / EGRESO)
+    patente_1: str | None = Field(default=None, index=True)
+    patente_2: str | None = Field(default=None, index=True)
+    # Exportación
+    documento_exportacion: str | None = Field(default=None, index=True)
     observaciones: str | None = None
-    producto: Producto | None = Relationship(back_populates="eventos")
+    lote: LoteProduccion | None = Relationship(back_populates="eventos")
     ubicacion: Ubicacion | None = Relationship(back_populates="eventos")
+
 
 

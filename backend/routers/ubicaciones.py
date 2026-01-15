@@ -36,13 +36,10 @@ def crear_ubicacion(
     return nueva
 
 
-@router.get(
-    "",
-    response_model=list[UbicacionRead]
-)
+@router.get("/")
 def listar_ubicaciones(
     tipo_id: int | None = None,
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     query = select(Ubicacion)
 
@@ -50,3 +47,14 @@ def listar_ubicaciones(
         query = query.where(Ubicacion.tipo_id == tipo_id)
 
     return session.exec(query).all()
+
+
+@router.get("/{ubicacion_id}")
+def obtener_ubicacion(
+    ubicacion_id: int,
+    session: Session = Depends(get_session),
+):
+    ubicacion = session.get(Ubicacion, ubicacion_id)
+    if not ubicacion:
+        raise HTTPException(status_code=404, detail="Ubicación no encontrada")
+    return ubicacion
