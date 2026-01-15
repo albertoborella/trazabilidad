@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
+from services.trazabilidad import stock_disponible
 from database import get_session
 from models import LoteProduccion, Producto
 from schemas.lotes import LoteCreate, LoteRead
@@ -41,3 +42,22 @@ def obtener_lote(lote_id: int, session: Session = Depends(get_session)):
     if not lote:
         raise HTTPException(404, "Lote no encontrado")
     return lote
+
+
+
+@router.get("/{lote_id}/stock")
+def obtener_stock_lote(
+    lote_id: int,
+    session: Session = Depends(get_session),
+):
+    lote = session.get(LoteProduccion, lote_id)
+    if not lote:
+        raise HTTPException(status_code=404, detail="Lote no encontrado")
+
+    stock = stock_disponible(session, lote_id)
+
+    return {
+        "lote_id": lote_id,
+        "lote": lote.lote,
+        "stock_disponible": stock,
+    }

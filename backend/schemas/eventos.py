@@ -7,6 +7,7 @@ class EventoCreate(SQLModel):
     ubicacion_id: int
     tipo_evento: TipoEvento
     fecha_hora: datetime
+    cantidad: float | None = None
 
     patente_1: str | None = None
     patente_2: str | None = None
@@ -15,5 +16,15 @@ class EventoCreate(SQLModel):
     observaciones: str | None = None
 
 
-class EventoRead(EventoCreate):
+class EventoRead(SQLModel):
     id: int
+    lote_id: int
+    ubicacion_id: int
+    tipo_evento: TipoEvento
+    fecha_hora: datetime
+    cantidad: float | None = None 
+
+    patente_1: str | None = None
+    patente_2: str | None = None
+    documento_exportacion: str | None = None
+

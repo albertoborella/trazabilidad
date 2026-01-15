@@ -10,6 +10,31 @@ from models import (
 )
 
 
+# ============================
+# STOCK DISPONIBLE POR LOTE
+# ============================
+def stock_disponible(session: Session, lote_id: int) -> float:
+    eventos = session.exec(
+        select(EventoTrazabilidad)
+        .where(EventoTrazabilidad.lote_id == lote_id)
+        .order_by(EventoTrazabilidad.fecha_hora)
+    ).all()
+
+    stock = 0.0
+
+    for e in eventos:
+        if e.tipo_evento == TipoEvento.PRODUCCION:
+            stock += e.cantidad
+        elif e.tipo_evento in (TipoEvento.EGRESO, TipoEvento.EXPORTACION):
+            stock -= e.cantidad
+        # INGRESO no modifica stock del lote
+
+    return stock
+
+
+# ============================
+# VALIDACIÓN DE EVENTO
+# ============================
 def validar_evento(session: Session, evento):
     # ============================
     # Validar que exista el lote
@@ -32,13 +57,33 @@ def validar_evento(session: Session, evento):
         )
 
     # ============================
-    # Validar fecha >= fecha producción
+    # Validar fecha >= producción
     # ============================
     if evento.fecha_hora.date() < lote.fecha_produccion:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="La fecha del evento no puede ser anterior a la fecha de producción del lote",
         )
+
+    # ============================
+    # Validar cantidad
+    # ============================
+    if evento.cantidad is None or evento.cantidad <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La cantidad es obligatoria y debe ser mayor a cero",
+        )
+
+    # ============================
+    # Validar stock disponible
+    # ============================
+    if evento.tipo_evento in (TipoEvento.EGRESO, TipoEvento.EXPORTACION):
+        disponible = stock_disponible(session, evento.lote_id)
+        if evento.cantidad > disponible:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Stock insuficiente. Disponible: {disponible} kg",
+            )
 
     # ============================
     # Validaciones por tipo de evento
@@ -58,7 +103,7 @@ def validar_evento(session: Session, evento):
             )
 
     if evento.tipo_evento == TipoEvento.PRODUCCION:
-        if evento.patente_1 or evento.documento_exportacion:
+        if evento.patente_1 or evento.patente_2 or evento.documento_exportacion:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="El evento de producción no debe tener patentes ni documentos",
@@ -103,7 +148,7 @@ def validar_evento(session: Session, evento):
             )
         return
 
-    # No repetir mismo tipo consecutivo
+    # No permitir mismo tipo consecutivo
     if ultimo_evento.tipo_evento == evento.tipo_evento:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -119,6 +164,8 @@ def validar_evento(session: Session, evento):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="La exportación solo puede registrarse después de un egreso",
         )
+
+
 
     
 

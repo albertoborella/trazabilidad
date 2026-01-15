@@ -53,6 +53,7 @@ class EventoTrazabilidad(SQLModel, table=True):
     ubicacion_id: int = Field(foreign_key="ubicacion.id", index=True)
     tipo_evento: TipoEvento = Field(index=True)
     fecha_hora: datetime = Field(index=True)
+    cantidad: float = Field(gt=0)
     # Transporte (INGRESO / EGRESO)
     patente_1: str | None = Field(default=None, index=True)
     patente_2: str | None = Field(default=None, index=True)
