@@ -12,6 +12,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+seed.py
 
 # =========================
 # Bases de datos
@@ -35,12 +36,11 @@ __pycache__/
 dist/
 build/
 
-# =========================
-# Frontend (React / Vite)
-# =========================
-node_modules/
-npm-debug.log*
-yarn-error.log*
+# Logs
+*.log
+
+# OS
+.DS_Store
 
 # =========================
 # Sistema operativo
@@ -52,10 +52,3 @@ Thumbs.db
 # IDEs
 # =========================
 .vscode/
-.idea/
-
-# =========================
-# Archivos temporales
-# =========================
-*.log
-*.tmp
