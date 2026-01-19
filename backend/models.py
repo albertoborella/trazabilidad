@@ -24,7 +24,7 @@ class Ubicacion(SQLModel, table=True):
     codigo: str = Field(unique=True, index=True)
     nombre: str
     tipo_id: int = Field(foreign_key="tipoubicacion.id")
-    pais: str
+    pais: str | None = None
     provincia: str | None = None
     ciudad: str | None = None
     tipo: TipoUbicacion | None = Relationship(back_populates="ubicaciones")

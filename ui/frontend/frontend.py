@@ -1,6 +1,9 @@
 import reflex as rx
 from frontend.pages.dashboard import dashboard
 from frontend.pages.productos import productos
+from frontend.pages.ubicaciones import ubicaciones
+from frontend.pages.ubicaciones_nueva import ubicaciones_nueva
+from frontend.pages.ubicaciones_editar import ubicaciones_editar
 
 app = rx.App(
     theme=rx.theme(
